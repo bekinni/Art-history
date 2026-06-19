@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Through the Ages &#8212; A History of Art</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#0d0c16;color:#d4c5a9;min-height:100vh}
+nav{position:sticky;top:0;z-index:50;background:rgba(13,12,22,0.96);border-bottom:1px solid rgba(201,168,76,0.22);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.1rem;color:#c9a84c;cursor:pointer;letter-spacing:.04em}
+.breadcrumb{font-size:.75rem;color:#8a7d6a;display:flex;align-items:center;gap:.4rem}
+.breadcrumb span{cursor:pointer}.breadcrumb span:hover{color:#c9a84c}
+.hero{text-align:center;padding:60px 1.5rem 40px;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.1),transparent 70%)}
+.hero h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:#faf8f2;line-height:1.1;margin-bottom:.8rem}
+.hero h1 em{font-style:italic;color:#c9a84c}
+.hero p{font-size:1rem;color:#8a7d6a;max-width:500px;margin:0 auto;line-height:1.7}
+.timeline{max-width:900px;margin:0 auto;padding:20px 1.5rem 0;position:relative}
+.timeline::before{content:"";position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,.25) 5%,rgba(201,168,76,.25) 95%,transparent)}
+.era-row{display:flex;align-items:flex-start;margin-bottom:3rem;cursor:pointer;position:relative}
+.era-row:nth-child(odd){padding-right:calc(50% + 32px)}
+.era-row:nth-child(even){padding-left:calc(50% + 32px);flex-direction:row-reverse}
+.era-dot{position:absolute;left:50%;transform:translateX(-50%);top:18px;width:14px;height:14px;border-radius:50%;border:2px solid #c9a84c;background:#0d0c16;z-index:2;transition:all .3s}
+.era-row:hover .era-dot{background:#c9a84c;box-shadow:0 0 16px rgba(201,168,76,.5);transform:translateX(-50%) scale(1.4)}
+.era-card{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:1.25rem;width:100%;transition:all .3s;position:relative}
+.era-row:hover .era-card{border-color:rgba(201,168,76,.45);background:#1d1c32;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.era-period{font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#c9a84c;margin-bottom:.35rem}
+.era-name{font-size:1.35rem;font-weight:700;color:#faf8f2;margin-bottom:.5rem}
+.era-tagline{font-size:.82rem;color:#8a7d6a;line-height:1.6;margin-bottom:.8rem}
+.era-pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:500;background:rgba(201,168,76,.1);color:#e8c97a;border:1px solid rgba(201,168,76,.2)}
+.era-arrow{position:absolute;right:.9rem;bottom:.9rem;font-size:.9rem;color:#c9a84c;opacity:0;transition:opacity .3s}
+.era-row:hover .era-arrow{opacity:1}
+.page{display:none}.page.active{display:block}
+.era-page,.artist-page{max-width:860px;margin:0 auto;padding:50px 1.5rem 60px}
+.back-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;color:#8a7d6a;cursor:pointer;margin-bottom:1.75rem;transition:color .2s;border:none;background:none;font-family:inherit;padding:0}
+.back-btn:hover{color:#c9a84c}
+.era-label{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#c9a84c;margin-bottom:.4rem}
+.era-title{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#faf8f2;line-height:1.1;margin-bottom:1rem}
+.era-intro{font-size:.95rem;line-height:1.85;color:#d4c5a9;margin-bottom:2rem}
+.era-intro p+p{margin-top:.85rem}
+.divider{height:1px;background:rgba(201,168,76,.18);margin:2rem 0}
+.section-title{font-size:1.5rem;font-weight:700;color:#faf8f2;margin-bottom:1.2rem}
+.section-title span{color:#c9a84c}
+.ideas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:2.5rem}
+.idea-card{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:10px;padding:1.1rem}
+.idea-card h4{font-size:.95rem;color:#c9a84c;margin-bottom:.3rem}
+.idea-card p{font-size:.8rem;color:#8a7d6a;line-height:1.6}
+.artists-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:2.5rem}
+.artist-card{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:1.3rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.artist-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c9a84c,#6b3fa0);transform:scaleX(0);transition:transform .3s}
+.artist-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.4);border-color:rgba(201,168,76,.4)}
+.artist-card:hover::before{transform:scaleX(1)}
+.aicon{font-size:1.8rem;margin-bottom:.8rem}
+.artist-card h3{font-size:1.1rem;color:#faf8f2;margin-bottom:.25rem}
+.ayears{font-size:.72rem;color:#8a7d6a;margin-bottom:.5rem}
+.ashort{font-size:.82rem;color:#8a7d6a;line-height:1.5}
+.acta{margin-top:.9rem;font-size:.75rem;color:#c9a84c}
+.artist-header{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1.75rem;flex-wrap:wrap}
+.abigicon{font-size:2.5rem;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d1c32,#3d1a5e);display:flex;align-items:center;justify-content:center;border:2px solid rgba(201,168,76,.25);flex-shrink:0}
+.abadge{display:inline-block;padding:2px 10px;border-radius:20px;background:rgba(201,168,76,.12);color:#c9a84c;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem}
+.aname{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;color:#faf8f2;margin-bottom:.25rem}
+.adates{font-size:.88rem;color:#8a7d6a}
+.abio{font-size:.95rem;line-height:1.85;color:#d4c5a9;margin-bottom:2rem}
+.abio p+p{margin-top:.85rem}
+.works-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;margin-bottom:2.5rem}
+.work-card{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:12px;overflow:hidden}
+.wimg-wrap{display:block;height:220px;overflow:hidden;background:#1a1828;border-bottom:1px solid rgba(201,168,76,.15);position:relative;text-decoration:none;cursor:pointer}
+.wimg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.work-card:hover .wimg{transform:scale(1.04)}
+.wimg-overlay{position:absolute;bottom:0;left:0;right:0;background:rgba(13,12,22,.75);color:#c9a84c;font-size:.72rem;letter-spacing:.05em;text-align:center;padding:.4rem;opacity:0;transition:opacity .25s}
+.wimg-wrap:hover .wimg-overlay{opacity:1}
+.wsearch{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#16152a,#1d1c32);border-bottom:1px solid rgba(201,168,76,.2);transition:all .3s}
+.wsearch:hover{background:linear-gradient(135deg,#1d1c32,#2a2040);border-bottom-color:rgba(201,168,76,.5)}
+.wsearch-inner{text-align:center;padding:1rem}
+.wsearch-icon{font-size:2.2rem;margin-bottom:.6rem}
+.wsearch-label{font-size:.95rem;color:#c9a84c;font-weight:600;margin-bottom:.3rem}
+.wsearch-sub{font-size:.72rem;color:#8a7d6a}
+.winfo{padding:1.1rem}
+.wtname{font-size:1rem;color:#faf8f2;margin-bottom:.2rem;font-style:italic}
+.wyear{font-size:.72rem;color:#c9a84c;margin-bottom:.5rem}
+.wdesc{font-size:.8rem;color:#8a7d6a;line-height:1.6}
+.impact-box{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:1.4rem;margin-bottom:2.5rem}
+.impact-box h3{font-size:1.05rem;color:#c9a84c;margin-bottom:.6rem}
+.impact-box p{font-size:.88rem;color:#d4c5a9;line-height:1.7}
+.qbox{background:#16152a;border:1px solid rgba(201,168,76,.18);border-radius:14px;padding:1.75rem;margin-bottom:2.5rem}
+.qtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.qtop h3{font-size:1.2rem;color:#faf8f2}
+.qprog{font-size:.75rem;color:#8a7d6a}
+.qq{font-size:.95rem;color:#faf8f2;line-height:1.6;margin-bottom:1.25rem}
+.qopts{display:grid;gap:.6rem}
+.qopt{background:#22203a;border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:.75rem 1rem;font-size:.88rem;color:#d4c5a9;cursor:pointer;transition:all .25s;text-align:left;font-family:inherit;width:100%}
+.qopt:hover:not([disabled]){border-color:#c9a84c;color:#faf8f2;background:rgba(201,168,76,.08)}
+.qopt.correct{border-color:#4caf50!important;background:rgba(76,175,80,.12)!important;color:#a5d6a7!important}
+.qopt.wrong{border-color:#f44336!important;background:rgba(244,67,54,.1)!important;color:#ef9a9a!important}
+.qopt:disabled{cursor:default}
+.qfb{margin-top:.9rem;padding:.85rem 1rem;border-radius:8px;font-size:.85rem;line-height:1.6;display:none}
+.qfb.show{display:block}
+.qfb.correct{background:rgba(76,175,80,.1);color:#a5d6a7;border:1px solid rgba(76,175,80,.3)}
+.qfb.wrong{background:rgba(244,67,54,.08);color:#ef9a9a;border:1px solid rgba(244,67,54,.2)}
+.qnav{display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem}
+.qbtn{background:#c9a84c;color:#0d0c16;border:none;border-radius:7px;padding:.55rem 1.2rem;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.qbtn:hover:not([disabled]){background:#e8c97a;transform:translateY(-1px)}
+.qbtn[disabled]{opacity:.35;cursor:default;transform:none}
+.qscore{text-align:center;padding:2rem 0}
+.qscore-num{font-size:3.5rem;font-weight:900;color:#c9a84c;display:block;margin-bottom:.4rem}
+.qscore-msg{color:#8a7d6a;font-size:.9rem;margin-bottom:1.2rem;display:block}
+.qretry{background:transparent;border:1px solid #c9a84c;color:#c9a84c;border-radius:8px;padding:.5rem 1.2rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+.qretry:hover{background:rgba(201,168,76,.1)}
+.grand-tour{max-width:900px;margin:0 auto;padding:0 1.5rem 60px}
+.sq-pips{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.sq-pip{width:28px;height:6px;border-radius:3px;background:rgba(201,168,76,.18);transition:background .3s}
+.sq-pip.cur{background:#c9a84c}.sq-pip.ok{background:#4caf50}.sq-pip.no{background:#f44336}
+.sq-type-label{font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#c9a84c;margin-bottom:.6rem}
+.sq-score{text-align:center;padding:2rem 0}
+.sq-score-num{font-size:4rem;font-weight:900;color:#c9a84c;display:block;margin-bottom:.4rem}
+.sq-score-msg{color:#8a7d6a;font-size:.95rem;margin-bottom:1.5rem;display:block}
+.sq-retry{background:transparent;border:1px solid #c9a84c;color:#c9a84c;border-radius:8px;padding:.55rem 1.4rem;font-size:.88rem;cursor:pointer;font-family:inherit}
+.sq-retry:hover{background:rgba(201,168,76,.1)}
+@media(max-width:640px){
+  .timeline::before{left:20px}
+  .era-row:nth-child(odd),.era-row:nth-child(even){padding-left:50px;padding-right:0;flex-direction:row}
+  .era-dot{left:20px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo" onclick="goHome()">&#10022; Through the Ages</div>
+  <div class="breadcrumb" id="bc"></div>
+</nav>
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>Art Through<br><em>the Ages</em></h1>
+    <p>From the cave walls of prehistory to the radical experiments of the contemporary world &#8212; explore humanity&#8217;s greatest visual legacy.</p>
+  </div>
+  <div class="timeline" id="timeline"></div>
+  <div class="grand-tour">
+    <div class="divider"></div>
+    <h2 class="section-title">Grand Tour <span>Quiz</span></h2>
+    <p style="font-size:.88rem;color:#8a7d6a;margin-bottom:1.5rem;line-height:1.6">Test yourself across all eras &#8212; match artists to their era, put movements in order, and answer true or false.</p>
+    <div class="sq-pips" id="sq-pips"></div>
+    <div id="sq-box"></div>
+  </div>
+</div>
+<div class="page" id="page-era"><div class="era-page" id="era-content"></div></div>
+<div class="page" id="page-artist"><div class="artist-page" id="artist-content"></div></div>
+<script>
+var ERAS=[
+{id:"ancient",name:"Ancient Art",period:"30,000 BCE \u2013 400 CE",emoji:"\uD83C\uDFDB\uFE0F",
+tagline:"The first expressions of human consciousness \u2014 ritual, myth, and the divine made visible in stone, clay, and pigment.",
+intro:"Ancient art encompasses humanity's oldest known creative acts, from Palaeolithic cave paintings to the grand cultures of Egypt, Greece, and Rome. These works were rarely art in the modern sense \u2014 they were ritual objects, propaganda, acts of devotion, or tools for navigating the afterlife.\n\nGreek art evolved from rigid Archaic forms toward extraordinary naturalism, celebrating the human body as a measure of perfection. Roman art absorbed Greek influence and turned it toward civic and imperial propaganda.",
+ideas:[{t:"Ritual Function",d:"Art served religious and funerary purposes \u2014 votive offerings, tomb decorations, temple sculptures."},{t:"Canon & Convention",d:"Egyptian art followed strict proportional rules; figures depicted not as seen but as known."},{t:"Greek Idealism",d:"Sculptors moved toward idealised naturalism, depicting perfected human forms as metaphors for divine order."},{t:"Imperial Narrative",d:"Roman art used relief sculpture, portraiture, and architecture to communicate the power of the Empire."}],
+keywords:["Fresco","Relief Sculpture","Canon","Contrapposto","Mosaic"],
+artists:[
+{id:"pheidias",name:"Pheidias",years:"c. 480\u2013430 BCE",icon:"\uD83C\uDFDB\uFE0F",
+short:"Master sculptor of Classical Greece, creator of the Statue of Zeus and the Athena Parthenos.",
+bio:"Pheidias is considered the greatest sculptor of Classical Antiquity. Though none of his original works survive, the ancients regarded him as unsurpassed.\n\nHe worked during the age of Pericles in Athens and was appointed to oversee the entire sculptural programme of the Acropolis. His two most celebrated works were the chryselephantine (gold and ivory) cult statues: the Athena Parthenos inside the Parthenon, and the colossal Zeus at Olympia, one of the Seven Wonders of the Ancient World.",
+impact:"Pheidias established the Classical Greek ideal of divine beauty and proportion. His chryselephantine technique and monumental scale set a template for sacred sculpture that influenced Roman, Byzantine, and later Renaissance art.",
+works:[
+{title:"Athena Parthenos",year:"438 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Athena+Parthenos+Pheidias",desc:"A colossal 12-metre chryselephantine statue of Athena in full armour, housed inside the Parthenon. Constructed from gold sheets and ivory over a wooden core."},
+{title:"Zeus at Olympia",year:"c. 435 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Statue+of+Zeus+Pheidias+Olympia",desc:"One of the Seven Wonders of the Ancient World. Zeus was depicted seated on an elaborate throne, approximately 13 metres tall. Ancient visitors reported the statue moved them to tears."},
+{title:"Parthenon Frieze",year:"c. 440 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Parthenon+Frieze+Pheidias",desc:"The Parthenon frieze ran 160 metres around the temple interior, depicting the Panathenaic procession with extraordinary naturalism."}
+],
+quiz:[
+{q:"Pheidias was the greatest sculptor of which ancient civilisation?",opts:["Rome","Egypt","Greece","China"],a:2,exp:"Pheidias is considered the greatest sculptor of Classical Antiquity \u2014 Ancient Greece. He oversaw the sculptures on the Parthenon in Athens."},
+{q:"The Statue of Zeus at Olympia was one of the Seven Wonders of the Ancient World \u2014 true or false?",opts:["True","False"],a:0,exp:"True! Pheidias created the Statue of Zeus at Olympia. It was so impressive that visitors said it moved them to tears."},
+{q:"What were Pheidias's great cult statues made from?",opts:["A single block of marble","Gold sheets and ivory over a wooden frame","Solid bronze","Painted terracotta"],a:1,exp:"Pheidias used a technique called chryselephantine, building statues from gold sheets and carved ivory over a wooden core."}
+]},
+{id:"praxiteles",name:"Praxiteles",years:"c. 400\u2013330 BCE",icon:"\uD83D\uDDFF",
+short:"Athenian sculptor who revolutionised Greek art by introducing sensuality and the S-curve into divine figures.",
+bio:"Praxiteles is the most celebrated sculptor of the Late Classical period. His revolutionary contribution was the Praxitelean curve \u2014 a languid S-shaped pose that gave his figures a relaxed sensuality quite unlike earlier Classical sculpture.\n\nHis most celebrated work was the Aphrodite of Knidos \u2014 the first large-scale depiction of a female nude in Greek sculpture. Ancient travellers visited the sanctuary at Knidos specifically to see it.",
+impact:"Praxiteles transformed the representation of the divine by introducing sensuality, psychological interiority, and the female nude into monumental sculpture. His influence on Hellenistic and Roman sculpture was enormous.",
+works:[
+{title:"Aphrodite of Knidos",year:"c. 350 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Aphrodite+of+Knidos+Praxiteles",desc:"The first monumental nude female sculpture in Greek art. So famous that the people of Knidos refused a massive offer to purchase it."},
+{title:"Hermes and the Infant Dionysus",year:"c. 330 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Hermes+Infant+Dionysus+Praxiteles",desc:"Found at Olympia, possibly the only surviving original by a great Classical sculptor. The relaxed S-curve pose was revolutionary."},
+{title:"Apollo Sauroktonos",year:"c. 350 BCE",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Apollo+Sauroktonos+Praxiteles",desc:"Apollo the Lizard-Slayer \u2014 the god depicted as an adolescent boy languidly leaning against a tree about to spear a lizard."}
+],
+quiz:[
+{q:"The Aphrodite of Knidos was famous for being the first what in Greek sculpture?",opts:["First statue of a god","First large-scale female nude","First bronze statue","First portrait of a real person"],a:1,exp:"The Aphrodite of Knidos was the first monumental nude female sculpture in Greek art. It became the most copied statue in antiquity."},
+{q:"What is the name of the relaxed S-shaped pose Praxiteles used?",opts:["The Praxitelean curve","The Golden ratio","Chiaroscuro","Sfumato"],a:0,exp:"The Praxitelean curve is the signature S-shaped stance Praxiteles gave his figures, making them look relaxed and natural."},
+{q:"Which of these artworks was made by Praxiteles?",opts:["The Night Watch","Hermes and the Infant Dionysus","The Mona Lisa","Girl with a Pearl Earring"],a:1,exp:"Hermes and the Infant Dionysus is one of Praxiteles's most celebrated works and may be the only surviving original statue by a great Classical Greek master."}
+]}
+]},
+{id:"medieval",name:"Medieval Art",period:"400 \u2013 1400",emoji:"\u26EA\uFE0F",
+tagline:"Gold, God, and the sacred gaze \u2014 a thousand years when art existed not to depict the world but to open a window into heaven.",
+intro:"Medieval art spans roughly a thousand years across Europe and Byzantium. It is united by one overriding purpose: the glorification of God and the communication of Christian doctrine.\n\nByzantine art developed the icon \u2014 a sacred image rendered in gold and jewel-like colour, deliberately flattened to convey eternal divine truth. In Western Europe, the great cathedrals became the supreme art form. By the 14th century, painters like Giotto began reintroducing naturalism, planting the seeds of the Renaissance.",
+ideas:[{t:"Sacred Function",d:"Medieval art existed to instruct, inspire devotion, and make the invisible divine visible."},{t:"Gold & Transcendence",d:"Gold backgrounds represent the divine light of heaven \u2014 a timeless, eternal realm beyond earthly space."},{t:"Symbolic Language",d:"Size, colour, and position carried fixed symbolic meanings: Christ largest, gold for holiness, blue for the Virgin."},{t:"The Cathedral",d:"Gothic cathedrals combined architecture, stained glass, sculpture, and music into a unified sacred environment."}],
+keywords:["Icon","Fresco","Illumination","Gothic","Mosaic","Altarpiece"],
+artists:[
+{id:"giotto",name:"Giotto di Bondone",years:"c. 1267\u20131337",icon:"\u26EA\uFE0F",
+short:"The father of Western painting, who broke with the flat Byzantine tradition and gave figures weight, emotion, and humanity.",
+bio:"Giotto di Bondone is the pivotal figure in the history of Western painting. Working in Florence and Assisi, he made a revolutionary break with the flat Byzantine style by giving his figures genuine three-dimensional weight and psychological depth.\n\nHis greatest surviving work is the fresco cycle in the Scrovegni Chapel in Padua (1304\u20131306), depicting scenes from the lives of the Virgin and Christ. For the first time in centuries, painted figures grieved, embraced, turned in space, and looked at one another with recognisable human emotion.",
+impact:"Giotto is universally recognised as the founder of the Western tradition of painting. He broke open the frozen world of Byzantine art and made space for the humanity that would flower in the Renaissance. Without Giotto there is no Leonardo, no Michelangelo.",
+works:[
+{title:"Lamentation of Christ",year:"1304\u20131306",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Lamentation+of+Christ+Giotto+Scrovegni",desc:"The most celebrated fresco in the Scrovegni Chapel. Angels writhe in the sky; Mary holds her dead son; the apostles surround him in postures of real grief. Revolutionary in its emotional directness."},
+{title:"Kiss of Judas",year:"1304\u20131306",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Kiss+of+Judas+Giotto",desc:"Judas wraps his golden cloak around Christ in the moment of betrayal. Their faces are inches apart, gazes locked. The psychological tension is extraordinary for its era."},
+{title:"Ognissanti Madonna",year:"c. 1310",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Ognissanti+Madonna+Giotto",desc:"A large altarpiece showing the Virgin enthroned with angels and saints. Unlike Byzantine Madonnas, Giotto's Virgin has genuine physical weight and occupies real space."}
+],
+quiz:[
+{q:"Giotto is known as the father of what?",opts:["Sculpture","Western painting","Architecture","Printmaking"],a:1,exp:"Giotto di Bondone is universally recognised as the founder of the Western tradition of painting. He broke with the flat Byzantine style and gave figures real weight and emotion."},
+{q:"What was revolutionary about the way Giotto painted people?",opts:["He used bright neon colours","He gave figures real emotion, weight, and humanity for the first time in centuries","He painted them from above","He only painted landscapes"],a:1,exp:"Giotto's figures look at each other, grieve, embrace, and turn in space. This was a complete break from the flat, symbolic style of Byzantine art."},
+{q:"Giotto's most famous works are frescoes in a chapel in which Italian city?",opts:["Rome","Florence","Venice","Padua"],a:3,exp:"The Scrovegni Chapel in Padua, painted by Giotto around 1304 to 1306, contains his greatest fresco cycle."}
+]},
+{id:"duccio",name:"Duccio di Buoninsegna",years:"c. 1255\u20131319",icon:"\uD83D\uDD06",
+short:"The supreme master of the Sienese school, whose Maesta blended Byzantine splendour with a new tenderness and narrative grace.",
+bio:"Duccio di Buoninsegna was the greatest painter of Siena and Giotto's most important contemporary. Where Giotto broke decisively with the Byzantine tradition, Duccio worked within it but transformed it from within, introducing a new delicacy of line, warmth of feeling, and narrative sophistication.\n\nHis masterpiece is the Maesta (1308\u20131311), a monumental double-sided altarpiece for Siena Cathedral. When it was carried in procession to the Cathedral, the whole city celebrated.",
+impact:"Duccio established the Sienese school as the equal of Florence in the 14th century. His blend of Byzantine refinement with Gothic narrative grace influenced Italian painting throughout the century.",
+works:[
+{title:"Maesta (front)",year:"1308\u20131311",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Maesta+Duccio+Buoninsegna",desc:"The monumental front of the Siena Cathedral altarpiece. The Virgin sits enthroned in majesty surrounded by angels and saints. The gold ground glows with Byzantine splendour."},
+{title:"Maesta (Betrayal of Jesus)",year:"1308\u20131311",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Betrayal+Jesus+Duccio+Maesta",desc:"One of the 26 narrative panels on the back of the Maesta. The scene of Judas betraying Christ is depicted with remarkable psychological compression and crowd drama."},
+{title:"Rucellai Madonna",year:"1285",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Rucellai+Madonna+Duccio",desc:"A large altarpiece commissioned for Santa Maria Novella in Florence. The Virgin's throne is rendered with new spatial complexity."}
+],
+quiz:[
+{q:"Duccio was the greatest painter of which Italian city?",opts:["Florence","Rome","Siena","Venice"],a:2,exp:"Duccio di Buoninsegna was the supreme master of the Sienese school. His rival Giotto worked in Florence."},
+{q:"What was Duccio's most famous work, carried in procession through the city when finished?",opts:["The Scrovegni Chapel","The Rucellai Madonna","The Maesta","The Ognissanti Madonna"],a:2,exp:"The Maesta (1308-1311), painted for Siena Cathedral, was so celebrated that the whole city processed with it when installed."},
+{q:"Medieval paintings often had gold backgrounds. What did the gold represent?",opts:["The artist's wealth","The divine light of heaven and the eternal realm of God","A decorative fashion","The colour of sunlight"],a:1,exp:"Gold backgrounds in medieval art symbolised the divine light of heaven \u2014 a timeless, eternal realm beyond earthly space and time."}
+]}
+]},
+{id:"renaissance",name:"The Renaissance",period:"1400 \u2013 1600",emoji:"\uD83C\uDFA8",
+tagline:"The rebirth of antiquity \u2014 humanism, scientific perspective, and the rediscovery of the individual transformed art into a window onto the world.",
+intro:"The Renaissance began in Florence in the early 15th century and spread across Europe. Its central impulse was a recovery of ancient Greek and Roman learning, combined with a new belief in the dignity of the individual.\n\nLinear perspective gave painters a rational system for representing three-dimensional space. The High Renaissance saw Leonardo, Michelangelo, and Raphael achieve a level of mastery that contemporaries already regarded as the summit of human achievement.",
+ideas:[{t:"Linear Perspective",d:"A mathematical system for depicting three-dimensional space \u2014 parallel lines converge to a single vanishing point."},{t:"Humanism",d:"The individual human being \u2014 their potential, dignity, and rationality \u2014 became the central subject of art."},{t:"Anatomy & Naturalism",d:"Artists studied the human body scientifically, seeking to represent the world as it actually appears."},{t:"The Genius Artist",d:"For the first time, artists became celebrated individuals \u2014 the concept of the artist as creative genius emerged."}],
+keywords:["Perspective","Sfumato","Chiaroscuro","Fresco","Tempera","Humanism"],
+artists:[
+{id:"leonardo",name:"Leonardo da Vinci",years:"1452\u20131519",icon:"\uD83C\uDFA8",
+short:"The archetype of the Renaissance man \u2014 painter, sculptor, anatomist, engineer, and visionary scientist.",
+bio:"Leonardo da Vinci is perhaps the most versatile genius in recorded history. Born illegitimate in Tuscany, he was apprenticed to Andrea del Verrocchio in Florence and quickly surpassed his master.\n\nHis greatest technical innovation was sfumato \u2014 the almost imperceptible blending of tones and colours, creating figures that emerge from shadow with soft, seamless edges. He left thousands of pages of notes and drawings, designed flying machines and armoured vehicles centuries before they existed.",
+impact:"Leonardo invented sfumato and atmospheric perspective, transformed portraiture by psychologising his subjects, and elevated the status of the artist to philosopher-scientist. The Mona Lisa and The Last Supper are among the most reproduced images in human history.",
+works:[
+{title:"The Last Supper",year:"1495\u20131498",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Last+Supper+Leonardo+da+Vinci",desc:"A mural in Milan depicting the moment Christ announces one of his disciples will betray him. Leonardo captures 12 distinct reactions of shock, denial, grief, and guilt."},
+{title:"Mona Lisa",year:"c. 1503\u20131519",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Mona+Lisa+Leonardo+da+Vinci",desc:"The world's most famous painting. A woman sits before an imaginary landscape. The sfumato technique makes her smile seem to shift depending on where you look."},
+{title:"Vitruvian Man",year:"c. 1490",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Vitruvian+Man+Leonardo+da+Vinci",desc:"A drawing exploring the proportions of the human body based on the Roman architect Vitruvius. The iconic symbol of the Renaissance synthesis of art and science."}
+],
+quiz:[
+{q:"Which of these is the world's most famous painting, created by Leonardo da Vinci?",opts:["The Night Watch","Girl with a Pearl Earring","Mona Lisa","The Birth of Venus"],a:2,exp:"The Mona Lisa, painted by Leonardo around 1503 to 1519, is the most famous painting in the world. It hangs in the Louvre in Paris."},
+{q:"Leonardo was not just a painter. He also drew designs for which of these?",opts:["Submarines and cars","Flying machines and armoured vehicles","Trains and bridges","Telescopes and clocks"],a:1,exp:"Leonardo filled thousands of notebook pages with designs for flying machines, armoured vehicles, and many other inventions, centuries before they were actually built."},
+{q:"What is sfumato, the special painting technique Leonardo invented?",opts:["Painting outdoors in sunlight","Softly blending colours so edges appear hazy and mysterious","Using only dark colours","Painting on gold backgrounds"],a:1,exp:"Sfumato means evaporated like smoke in Italian. Leonardo blended colours so gradually that outlines disappear, giving his figures a mysterious and lifelike quality."}
+]},
+{id:"michelangelo",name:"Michelangelo",years:"1475\u20131564",icon:"\u26CF\uFE0F",
+short:"Divine sculptor, architect, and painter whose Sistine Chapel ceiling stands as Western civilisation's greatest artistic achievement.",
+bio:"Michelangelo was the most accomplished sculptor in the Western tradition. For him, sculpting was an act of liberation \u2014 releasing the perfect form hidden within the marble.\n\nFor Julius II he reluctantly agreed to paint the Sistine Chapel ceiling (1508\u20131512), a project consuming four years of backbreaking labour resulting in over 300 figures across 500 square metres. He also designed the dome of St Peter's Basilica. He died at 88.",
+impact:"Michelangelo defined the concept of the artist as solitary, tormented genius. His treatment of the human body as the ultimate vehicle for spiritual and emotional expression was never surpassed.",
+works:[
+{title:"The Creation of Adam",year:"1511",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Creation+of+Adam+Michelangelo+Sistine",desc:"The most famous detail from the Sistine Chapel ceiling. God reaches out to Adam \u2014 their fingers nearly, but not quite, touching. One of the most reproduced images in Western culture."},
+{title:"David",year:"1501\u20131504",img:"SEARCH:https://www.google.com/search?tbm=isch&q=David+Michelangelo+Florence",desc:"A 5.17-metre marble figure of the biblical hero, now in the Galleria dell'Accademia, Florence. Michelangelo depicted the moment before the battle."},
+{title:"Pieta",year:"1498\u20131499",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Pieta+Michelangelo+Vatican",desc:"Carved when Michelangelo was just 24. The Virgin Mary holds the dead Christ. The marble drapery flows like cloth; Mary's face is serene and youthful."}
+],
+quiz:[
+{q:"Where is Michelangelo's famous ceiling painting located?",opts:["The Louvre in Paris","The Sistine Chapel in Rome","The Uffizi in Florence","St Paul's Cathedral in London"],a:1,exp:"Michelangelo painted the ceiling of the Sistine Chapel in Rome between 1508 and 1512. It features over 300 figures and is one of the greatest artworks ever created."},
+{q:"Which of these famous sculptures did Michelangelo create?",opts:["The Thinker","David","Venus de Milo","Winged Victory"],a:1,exp:"Michelangelo carved David between 1501 and 1504. The 5-metre marble statue of the biblical hero is now in the Galleria dell'Accademia in Florence."},
+{q:"Michelangelo believed every block of stone already contained a statue inside it. What was the sculptor's job?",opts:["Painting the stone","Chipping away everything that was not the statue","Adding plaster","Melting the stone down"],a:1,exp:"Michelangelo believed the perfect figure was already hidden inside the marble, and the task was to free it by removing everything else."}
+]},
+{id:"raphael",name:"Raphael",years:"1483\u20131520",icon:"\uD83C\uDF38",
+short:"Master of ideal beauty and harmonious composition whose Madonnas and Vatican frescoes defined grace for generations.",
+bio:"Raffaello Sanzio is the third pillar of the High Renaissance and its most accessible genius. Where Leonardo was the restless scientist and Michelangelo the tormented prophet, Raphael was the consummate synthesiser \u2014 a painter of supreme grace, balance, and clarity.\n\nCalled to Rome by Pope Julius II in 1508, he painted the Stanza della Segnatura while Michelangelo worked just metres away on the Sistine ceiling. He died suddenly at 37.",
+impact:"Raphael's definition of ideal beauty became the benchmark for academic painting for three centuries. His Madonnas set the type for devotional imagery across Europe.",
+works:[
+{title:"School of Athens",year:"1509\u20131511",img:"SEARCH:https://www.google.com/search?tbm=isch&q=School+of+Athens+Raphael+Vatican",desc:"A fresco in the Vatican gathering all the great philosophers of antiquity under a grand classical arcade. Plato points to the heavens; Aristotle gestures downward."},
+{title:"The Sistine Madonna",year:"1512",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Sistine+Madonna+Raphael",desc:"The Virgin floats on clouds holding the Christ child. Below, the two famous cherubs gaze upward with expressions of adorable pensiveness \u2014 among the most reproduced details in art history."},
+{title:"Portrait of Baldassare Castiglione",year:"c. 1514\u20131515",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Portrait+Castiglione+Raphael",desc:"A portrait of the humanist author of The Book of the Courtier. Castiglione appears in muted grey and black, his gaze steady and intelligent."}
+],
+quiz:[
+{q:"Raphael's most famous fresco shows ancient Greek philosophers all gathered together. What is it called?",opts:["The Last Supper","The School of Athens","The Garden of Eden","The Creation of Adam"],a:1,exp:"The School of Athens, painted 1509 to 1511, gathers all the great philosophers of antiquity under a grand Roman arcade in the Vatican."},
+{q:"Raphael is especially celebrated for his paintings of which subject?",opts:["Battle scenes","Self-portraits","The Virgin Mary and Jesus","Ancient ruins"],a:2,exp:"Raphael painted some of the most beautiful images of the Virgin Mary and the Christ child ever made, setting the standard for devotional painting across Europe for centuries."},
+{q:"How old was Raphael when he died?",opts:["72","37","55","48"],a:1,exp:"Raphael died in 1520 at just 37 years old. Despite his short life, he produced an extraordinary number of masterpieces and is buried in the Pantheon in Rome."}
+]}
+]},
+{id:"baroque",name:"Baroque",period:"1600 \u2013 1750",emoji:"\uD83D\uDD6F\uFE0F",
+tagline:"Drama, grandeur, and chiaroscuro \u2014 the art of emotional extremity, where light became a theological weapon.",
+intro:"The Baroque emerged in Rome around 1600 as the Catholic Church, energised by the Counter-Reformation, sought an art that would overwhelm the senses and reaffirm the glory of faith.\n\nCaravaggio's brutal chiaroscuro created a new visual language. In Protestant Holland, Rembrandt developed extraordinary psychological portraiture; Vermeer illuminated intimate domestic interiors with almost supernatural light.",
+ideas:[{t:"Chiaroscuro",d:"Extreme contrast between light and dark \u2014 figures emerging dramatically from deep shadow, pioneered by Caravaggio."},{t:"Counter-Reformation",d:"The Catholic Church used emotional, overwhelming art to reassert faith and combat Protestant influence."},{t:"Theatricality & Motion",d:"Baroque art strives to capture a single dramatic moment \u2014 the peak of action, the height of emotion."},{t:"Tenebrism",d:"An extreme form of chiaroscuro where most of the composition is in deep shadow, with figures lit as if by spotlight."}],
+keywords:["Chiaroscuro","Tenebrism","Counter-Reformation","Foreshortening","Vanitas"],
+artists:[
+{id:"caravaggio",name:"Caravaggio",years:"1571\u20131610",icon:"\uD83D\uDD6F\uFE0F",
+short:"The violent genius whose radical chiaroscuro and street-level realism permanently changed European painting.",
+bio:"Michelangelo Merisi da Caravaggio placed saints and biblical heroes in dark, theatrical spaces lit by a single powerful light source, and depicted them as ordinary people of the streets with dirty feet and rough hands.\n\nHis life was as dramatic as his art. He killed a man during a brawl in 1606 and spent his final four years as a fugitive. He died in 1610 at 38.",
+impact:"Caravaggio's tenebrism and psychological realism transformed European painting. Rembrandt, Velazquez, and Rubens all absorbed and transformed his lessons.",
+works:[
+{title:"The Calling of Saint Matthew",year:"1600",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Calling+of+Saint+Matthew+Caravaggio",desc:"In a Roman tavern, Christ calls the tax collector Matthew to follow him. The beam of divine light falls across men counting money. The sacred is shown as utterly mundane."},
+{title:"Judith Beheading Holofernes",year:"c. 1598\u20131599",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Judith+Beheading+Holofernes+Caravaggio",desc:"The biblical heroine grips the Assyrian general by the hair and saws through his neck. The violence is entirely unidealized."},
+{title:"The Supper at Emmaus",year:"1601",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Supper+at+Emmaus+Caravaggio",desc:"The resurrected Christ reveals himself to two disciples at an inn. The moment of recognition is captured at its exact peak."}
+],
+quiz:[
+{q:"Caravaggio's paintings are famous for their dramatic use of light and shadow. What is this technique called?",opts:["Sfumato","En plein air","Chiaroscuro","Pointillism"],a:2,exp:"Chiaroscuro means light-dark in Italian. Caravaggio used extreme contrasts, bright light on figures against very dark backgrounds, to create incredible drama."},
+{q:"Caravaggio painted ordinary people as saints and biblical figures. Why was this shocking?",opts:["It was too expensive","People expected saints to look heavenly and perfect, not like everyday people","It was against the law","Churches did not want paintings"],a:1,exp:"Caravaggio used real people from the streets as his models for saints. Many church patrons were scandalised and refused to accept his altarpieces."},
+{q:"Which of these famous paintings is by Caravaggio?",opts:["Girl with a Pearl Earring","The Night Watch","Judith Beheading Holofernes","Starry Night"],a:2,exp:"Judith Beheading Holofernes is one of Caravaggio's most dramatic works, painted around 1598 to 1599."}
+]},
+{id:"rembrandt",name:"Rembrandt van Rijn",years:"1606\u20131669",icon:"\uD83C\uDF1F",
+short:"The supreme master of light and psychological portraiture, who illuminated the full complexity of human experience.",
+bio:"Rembrandt Harmenszoon van Rijn is the greatest master of the Dutch Golden Age and the greatest portraitist in Western art history. His personal life was marked by tragedy \u2014 his wife died young; he went bankrupt in 1656; his late companion and son died before him.\n\nHis use of light seems to emanate from within his figures. His self-portraits \u2014 over 80 across his career \u2014 constitute the most complete self-examination by any artist in history.",
+impact:"Rembrandt redefined portraiture as psychological rather than social document. His self-portraits established the template for the artist's self-examination that runs through Van Gogh to Frida Kahlo.",
+works:[
+{title:"The Night Watch",year:"1642",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Night+Watch+Rembrandt",desc:"The largest and most famous work in Amsterdam's Rijksmuseum. A militia company strides forward from shadow into light with extraordinary dynamism."},
+{title:"Self-Portrait with Two Circles",year:"c. 1665\u20131669",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Self+Portrait+Two+Circles+Rembrandt",desc:"One of Rembrandt's last self-portraits, painted when he was in his sixties, bankrupt and bereaved. He stares directly at us with vulnerability, dignity, and defiant intelligence."},
+{title:"The Anatomy Lesson of Dr Nicolaes Tulp",year:"1632",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Anatomy+Lesson+Rembrandt+Tulp",desc:"Dr Tulp demonstrates human anatomy by dissecting a cadaver's arm before Amsterdam surgeons. Each face is a distinct psychological portrait."}
+],
+quiz:[
+{q:"What country did Rembrandt come from?",opts:["Italy","Spain","The Netherlands","Germany"],a:2,exp:"Rembrandt van Rijn was born in Leiden in the Netherlands in 1606. He spent most of his career in Amsterdam during the Dutch Golden Age."},
+{q:"Rembrandt painted over 80 self-portraits throughout his life. Why is this remarkable?",opts:["Self-portraits were banned","It makes him one of history's most thorough self-examiners in paint","He could not afford other models","He was the only artist allowed to paint himself"],a:1,exp:"Rembrandt's 80 plus self-portraits are unique. No other artist painted themselves so consistently across a whole lifetime."},
+{q:"Rembrandt's most famous group painting shows a militia company marching. What is it called?",opts:["The Last Supper","The Anatomy Lesson","The Night Watch","The School of Athens"],a:2,exp:"The Night Watch (1642) is Rembrandt's most famous work. It hangs in a specially designed room in the Rijksmuseum in Amsterdam."}
+]},
+{id:"vermeer",name:"Johannes Vermeer",years:"1632\u20131675",icon:"\uD83D\uDCA1",
+short:"Master of domestic light and quiet intimacy, capturing time suspended in Dutch interiors of extraordinary luminosity.",
+bio:"Johannes Vermeer of Delft produced only around 34 to 36 authenticated paintings, but their quality is so consistently astonishing that he is considered the supreme master of the Dutch interior.\n\nHe was essentially forgotten for two centuries after his death until the French critic Thore-Burger rediscovered him in the 1860s.",
+impact:"Vermeer's treatment of domestic interiors as subjects worthy of the profoundest artistic attention influenced Impressionism and realist painting. His study of light prefigures modern photography's concerns.",
+works:[
+{title:"Girl with a Pearl Earring",year:"c. 1665",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Girl+with+a+Pearl+Earring+Vermeer",desc:"Often called the Mona Lisa of the North. A girl turns to look over her shoulder at the viewer. The luminous pearl earring, the turban, the slightly parted lips: a masterclass in suspended moment."},
+{title:"Woman Reading a Letter",year:"c. 1663",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Woman+Reading+a+Letter+Vermeer",desc:"A young woman stands absorbed in reading a letter, light from an unseen window falling on her face. The room is quiet; time has stopped."},
+{title:"The Art of Painting",year:"c. 1666\u20131668",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Art+of+Painting+Vermeer",desc:"Vermeer's largest work and the one he never sold. An artist (possibly Vermeer himself, seen from behind) paints a model dressed as Clio, the Muse of History."}
+],
+quiz:[
+{q:"Which of these famous paintings is by Vermeer?",opts:["Starry Night","Girl with a Pearl Earring","The Night Watch","Guernica"],a:1,exp:"Girl with a Pearl Earring is Vermeer's most famous work, often called the Mona Lisa of the North. Her identity remains unknown."},
+{q:"Vermeer's paintings almost always show the same type of scene. Which?",opts:["Outdoor landscapes","Battle scenes","Quiet indoor scenes lit by a window","Religious subjects with gold backgrounds"],a:2,exp:"Vermeer specialised in intimate indoor scenes, usually a single figure in a simply furnished room lit by soft light from a window on the left."},
+{q:"Roughly how many paintings did Vermeer make in his whole career?",opts:["Over 500","Around 35","Around 150","Around 80"],a:1,exp:"Vermeer produced only around 34 to 36 authenticated paintings, a tiny number for a professional painter."}
+]}
+]},
+{id:"impressionism",name:"Impressionism",period:"1860 \u2013 1900",emoji:"\uD83C\uDF38",
+tagline:"The revolutionary moment when painting left the studio \u2014 capturing light, movement, and the fleeting sensation of modern life.",
+intro:"Impressionism was the most radical break in Western painting since the Renaissance. In 1874, a group of young Paris-based painters held their own independent exhibition after rejection by the official Salon. A critic mocked one of Monet's paintings, calling it a mere impression. The artists adopted the insult as their name.\n\nThese painters took their canvases outdoors to paint natural light directly. They used broken, visible brushstrokes of unmixed colour.",
+ideas:[{t:"En Plein Air",d:"Painting outdoors directly from nature to capture real light and atmospheric conditions."},{t:"Broken Colour",d:"Short, visible brushstrokes of unmixed colour that blend optically in the viewer's eye."},{t:"Capturing the Moment",d:"The subject was visual sensation \u2014 a passing effect of light, a fleeting gesture \u2014 rather than permanent form."},{t:"Modern Life",d:"Cafes, railway stations, leisure \u2014 the Impressionists embraced modern subjects rejected by academic painting."}],
+keywords:["En Plein Air","Broken Colour","Optical Mixing","Impasto","Japonisme"],
+artists:[
+{id:"monet",name:"Claude Monet",years:"1840\u20131926",icon:"\uD83C\uDF38",
+short:"The founding father of Impressionism, who devoted his life to capturing light's infinite transformations.",
+bio:"Oscar-Claude Monet dedicated his life and work to capturing the transient effects of light on the visual world. Over a career spanning more than 60 years, he pursued this obsession with increasingly radical intensity.\n\nFrom the 1890s onward, he worked in serial paintings \u2014 the same subject at different times of day: Haystacks, Rouen Cathedral, and above all the Waterlilies at his garden at Giverny.",
+impact:"Monet's dissolution of form into light and colour sensation directly inspired the Abstract Expressionists, particularly Mark Rothko. He is the most expensive Impressionist at auction.",
+works:[
+{title:"Impression, Sunrise",year:"1872",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Impression+Sunrise+Monet",desc:"The painting that gave Impressionism its name. A hazy view of Le Havre harbour at dawn: the sun is a brilliant orange smear, boats are sketchy outlines, the water shimmers."},
+{title:"Water Lilies",year:"1914\u20131926",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Water+Lilies+Monet+Orangerie",desc:"Enormous canvases depicting the pond at Giverny installed as an immersive environment in the Orangerie, Paris. The horizon disappears; sky and water reflections merge."},
+{title:"Rouen Cathedral",year:"1892\u20131894",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Rouen+Cathedral+series+Monet",desc:"Monet painted Rouen Cathedral over 30 times in different light and weather. Each painting is not about the Cathedral but about light itself."}
+],
+quiz:[
+{q:"The Impressionists got their name from one of Monet's paintings. Which one?",opts:["Water Lilies","Impression, Sunrise","Rouen Cathedral","The Haystacks"],a:1,exp:"A critic mockingly called the group Impressionists after Monet's painting Impression, Sunrise from 1872. The artists adopted the insult as their own proud name."},
+{q:"What did Impressionist painters do differently from earlier artists?",opts:["They painted only religious scenes","They painted outdoors to capture real light using quick visible brushstrokes","They only used black and white","They worked only from photographs"],a:1,exp:"Impressionists took their canvases outside (en plein air) to capture the real effects of light and atmosphere."},
+{q:"Monet's famous garden at Giverny inspired which series of paintings?",opts:["The Haystacks","Rouen Cathedral","Water Lilies","Impression, Sunrise"],a:2,exp:"Monet designed a beautiful garden with a pond at Giverny in France and painted it hundreds of times in his Water Lilies series."}
+]},
+{id:"degas",name:"Edgar Degas",years:"1834\u20131917",icon:"\uD83D\uDC83",
+short:"The Impressionist outsider who found poetry in movement \u2014 radical cropping, ballet dancers, and cafe society.",
+bio:"Edgar Degas was associated with the Impressionists but rejected the label and painted almost exclusively in the studio. Influenced by Japanese woodblock prints and photography, he cropped figures at unexpected points and positioned his observers at angles never seen before.\n\nHe is celebrated for his ballet paintings \u2014 not celebrations of grace but studies in the physical labour of performance: backstage, at the barre, in exhausted poses between rehearsals.",
+impact:"Degas's radical cropping and asymmetrical composition permanently influenced pictorial design. His treatment of the body as simultaneously beautiful and physical anticipated much 20th-century figure painting.",
+works:[
+{title:"The Dance Class",year:"1874",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Dance+Class+Degas",desc:"Dancers at various stages of a lesson. The composition is radically asymmetrical; figures are cropped at the edge; some scratch their backs or adjust their costumes."},
+{title:"L'Absinthe",year:"1876",img:"SEARCH:https://www.google.com/search?tbm=isch&q=LAbsinthe+Degas+cafe",desc:"A man and a woman sit in a Paris cafe, not speaking, each staring into the distance. The loneliness of urban modern life has rarely been depicted with more devastating understatement."},
+{title:"Little Dancer, Aged Fourteen",year:"1881",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Little+Dancer+Aged+Fourteen+Degas",desc:"Degas's only publicly exhibited sculpture, shown in wax with real fabric tutu, hair ribbon, and ballet slippers. Critics called it a little monster. It is now one of the most beloved sculptures in any museum."}
+],
+quiz:[
+{q:"What subject is Degas most famous for painting?",opts:["Seascapes and boats","Ballet dancers","Portraits of kings","Still life with fruit"],a:1,exp:"Degas is most famous for his paintings and pastels of ballet dancers, not as celebrations of glamour but as honest studies of the hard physical work of rehearsal and training."},
+{q:"Degas's sculpture Little Dancer, Aged Fourteen was unusual because it was made with what?",opts:["Solid gold","Real fabric, hair, and a ribbon","Recycled materials","Painted canvas"],a:1,exp:"Degas's sculpture was made of wax with a real fabric tutu, real hair, and a real silk ribbon. Critics were shocked because sculptures were expected to use pure materials like marble or bronze."},
+{q:"Unlike the other Impressionists, Degas usually painted where?",opts:["On beaches","At railway stations","In his studio rather than outdoors","In churches"],a:2,exp:"While other Impressionists painted outdoors to capture natural light, Degas worked almost exclusively in the studio."}
+]}
+]},
+{id:"postImp",name:"Post-Impressionism",period:"1886 \u2013 1910",emoji:"\uD83C\uDF0C",
+tagline:"Beyond the fleeting moment \u2014 artists who took Impressionism and pushed it toward structure, emotion, symbol, and the subjective inner world.",
+intro:"Post-Impressionism is not a single movement but a term for the generation of artists who built on Impressionism and then moved decisively beyond it. They shared the Impressionist love of colour and paint, but were dissatisfied with its emphasis on surface and sensation.\n\nCezanne sought underlying geometric structure. Van Gogh externalised raw emotion. Gauguin pursued spiritual and symbolic meaning in colour. Together they laid the foundations for virtually every major 20th-century art movement.",
+ideas:[{t:"Structure over Sensation",d:"Cezanne rejected Impressionism's flickering surfaces and sought the permanent geometric structure beneath appearances."},{t:"Colour as Emotion",d:"Van Gogh used colour not to describe what he saw but to express what he felt \u2014 paving the way for all Expressionism."},{t:"Symbol and Spirituality",d:"Gauguin sought to go beyond the visible world into myth, dream, and the spiritual \u2014 using colour symbolically."},{t:"Scientific Colour",d:"Seurat developed Pointillism \u2014 applying unmixed dots of pure colour that blend optically in the viewer's eye from a distance."}],
+keywords:["Post-Impressionism","Pointillism","Symbolism","Primitivism","Synthetism","Expressionism"],
+artists:[
+{id:"vangogh",name:"Vincent van Gogh",years:"1853\u20131890",icon:"\uD83C\uDF3B",
+short:"The most intensely emotional artist in Western history, who used swirling colour and brushwork to externalise inner states.",
+bio:"Vincent Willem van Gogh began his adult life not as an artist but as an art dealer, a schoolteacher, and a lay preacher. He came to painting at 27 and compressed an entire career \u2014 nearly 900 paintings \u2014 into just 10 years before his death at 37.\n\nAfter an early dark period in the Netherlands, he arrived in Paris in 1886 and encountered Impressionism, which transformed his palette. He moved to Arles in 1888, painted at extraordinary speed, and voluntarily committed himself to the asylum at Saint-Paul-de-Mausole. He sold only one painting in his lifetime.",
+impact:"Van Gogh is the direct ancestor of Expressionism \u2014 of the idea that the purpose of art is to externalise internal emotional states. The Fauves, German Expressionists, and all Expressionist painting from Munch to Basquiat follows from Van Gogh.",
+works:[
+{title:"The Starry Night",year:"1889",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Starry+Night+Van+Gogh",desc:"Painted while Van Gogh was a patient at the asylum of Saint-Paul-de-Mausole. The night sky is a swirling cosmic energy; the village sleeps below; the cypress rises like a dark flame."},
+{title:"Sunflowers",year:"1888",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Sunflowers+Van+Gogh+painting",desc:"A series of paintings of sunflowers in a vase, made to decorate Gauguin's room in the Yellow House in Arles. Van Gogh's yellows glow with an almost hallucinatory intensity."},
+{title:"The Bedroom",year:"1888",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Bedroom+Van+Gogh+Arles",desc:"Van Gogh's own bedroom in the Yellow House in Arles, painted three times. He wrote that the colours here should be suggestive of rest or sleep in general."}
+],
+quiz:[
+{q:"Van Gogh's Starry Night is one of the most famous paintings in the world. Where did he paint it from?",opts:["His bedroom window in Paris","The window of a mental asylum where he was a patient","A hill overlooking his village","A boat on the sea"],a:1,exp:"Van Gogh painted The Starry Night in 1889 while staying at the Saint-Paul-de-Mausole asylum. He had voluntarily checked himself in following a mental health crisis."},
+{q:"How many paintings did Van Gogh sell during his lifetime?",opts:["Hundreds","Around fifty","Just one","None at all"],a:2,exp:"Van Gogh sold only one painting while he was alive. He is now one of the most expensive artists in history, with paintings selling for over 100 million dollars."},
+{q:"Which of these is one of Van Gogh's most famous paintings?",opts:["Girl with a Pearl Earring","Guernica","Sunflowers","The Night Watch"],a:2,exp:"Sunflowers (1888) is one of Van Gogh's most celebrated works, a series of paintings of sunflowers in a vase glowing with intense yellow."}
+]},
+{id:"cezanne",name:"Paul C\u00e9zanne",years:"1839\u20131906",icon:"\uD83C\uDF4E",
+short:"The father of modern art, whose geometric analysis of form laid the foundations for Cubism and almost every major 20th-century movement.",
+bio:"Paul Cezanne is the hinge between 19th and 20th-century art \u2014 the single most influential painter in the history of Modernism. Born in Aix-en-Provence in southern France, he worked in isolation after his early rejection by the Paris art world.\n\nHis obsessive subject was the analysis of form through colour. He painted Mont Sainte-Victoire, his local mountain, dozens of times \u2014 not to capture its appearance but to understand its underlying structure. Picasso called him the father of us all.",
+impact:"Cezanne's geometric reduction of form directly inspired Cubism. His systematic colour planes influenced every major 20th-century painter. Without Cezanne there is no Picasso, no Braque, no Matisse, no Mondrian.",
+works:[
+{title:"Mont Sainte-Victoire",year:"c. 1902\u20131906",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Mont+Sainte+Victoire+Cezanne",desc:"One of over 60 versions of his local mountain near Aix-en-Provence. The landscape is broken into interlocking planes of colour. Each brushstroke is a logical, considered unit."},
+{title:"The Card Players",year:"1894\u20131895",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Card+Players+Cezanne",desc:"Two Provencal farmworkers play cards in total absorbed concentration. The composition is monumental and utterly still. Sold in 2011 for approximately $250 million."},
+{title:"The Large Bathers",year:"1906",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Large+Bathers+Cezanne",desc:"Cezanne's most ambitious canvas, worked on for seven years. Monumental female nudes are integrated with a landscape of trees and sky into a single geometric structure."}
+],
+quiz:[
+{q:"Cezanne is often called the father of what?",opts:["Impressionism","Modern art and Cubism","Surrealism","Photography"],a:1,exp:"Cezanne is universally called the father of modern art. His geometric analysis of form directly inspired Cubism, and Picasso called him the father of us all."},
+{q:"Cezanne obsessively painted which local landmark near his home in southern France?",opts:["The Eiffel Tower","The River Seine","Mont Sainte-Victoire","The cliffs of Normandy"],a:2,exp:"Cezanne painted Mont Sainte-Victoire, the mountain near Aix-en-Provence, over 60 times."},
+{q:"Which famous artist said of Cezanne that he was the father of us all?",opts:["Monet","Van Gogh","Picasso","Rembrandt"],a:2,exp:"Picasso called Cezanne the father of us all. Cezanne's geometric reduction of form directly inspired Cubism."}
+]},
+{id:"gauguin",name:"Paul Gauguin",years:"1848\u20131903",icon:"\uD83C\uDFDD\uFE0F",
+short:"The restless visionary who abandoned Paris for Tahiti and used colour as a spiritual language rather than a description of reality.",
+bio:"Paul Gauguin began his career as a stockbroker before abandoning his family and career at 35 to become a full-time artist. Disillusioned with European civilisation, he sought what he called primitiveness \u2014 a purer, more spiritual way of life \u2014 first in Brittany, then Martinique, and finally in Tahiti and the Marquesas Islands.\n\nHis use of colour was radical: flat, unmodulated areas of intense, non-naturalistic colour used symbolically rather than descriptively.",
+impact:"Gauguin's use of colour as symbol, his embrace of non-Western art forms, and his rejection of naturalism all proved enormously influential. He opened the door to Fauvism, Expressionism, and the entire tradition of primitivism in 20th-century art.",
+works:[
+{title:"Where Do We Come From?",year:"1897\u20131898",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Where+Do+We+Come+From+What+Are+We+Where+Are+We+Going+Gauguin",desc:"Gauguin's largest and most ambitious work, painted in Tahiti. He intended it as his spiritual testament. Read right to left: birth, the middle of life, and death."},
+{title:"Vision After the Sermon",year:"1888",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Vision+After+the+Sermon+Gauguin",desc:"Breton women envision Jacob wrestling with the angel. The background is a flat, vivid red \u2014 not descriptive but symbolic of spiritual vision. A radical break from naturalism."},
+{title:"Two Tahitian Women",year:"1899",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Two+Tahitian+Women+Gauguin",desc:"Two Tahitian women bearing flowers and fruit, depicted with flat colour and a simplified outline. Sensuous, spiritual, and close to nature."}
+],
+quiz:[
+{q:"Where did Gauguin spend his final years searching for a more primitive and spiritual way of life?",opts:["Spain","Japan","Tahiti and the Marquesas Islands","Egypt"],a:2,exp:"Gauguin abandoned Paris and eventually settled in Tahiti and the Marquesas Islands in the Pacific, searching for a purer, more spiritual existence."},
+{q:"Gauguin used colour in a completely new way. How?",opts:["He only used black and white","He used colour symbolically and spiritually rather than to describe what he actually saw","He invented pointillism","He painted only at night"],a:1,exp:"Gauguin used flat, intense, non-naturalistic colour as a spiritual and symbolic language. A red background might represent a vision or emotion rather than an actual red surface."},
+{q:"Which later art movement did Gauguin most directly inspire with his bold flat colour?",opts:["Cubism","Surrealism","Fauvism","Pop Art"],a:2,exp:"Gauguin's flat areas of intense unmodulated colour directly inspired the Fauves \u2014 Matisse, Derain, and Vlaminck \u2014 around 1905."}
+]}
+]},
+{id:"modern",name:"Modernism",period:"1900 \u2013 1960",emoji:"\uD83D\uDFE5",
+tagline:"The great shattering \u2014 Cubism, Expressionism, Surrealism, and Abstraction dismantled a century of convention in a generation.",
+intro:"Modernism describes the extraordinary explosion of new movements that transformed painting and sculpture from roughly 1900 to 1960. It is not a single style but a shared attitude: a conviction that art must respond to the ruptures of modern life \u2014 industrialisation, world war, psychoanalysis, relativity \u2014 by radically reconceiving its own forms.\n\nCubism shattered the picture plane. Expressionism sought to externalise emotional states. Surrealism attempted to access the unconscious mind. Abstract art abandoned representation entirely.",
+ideas:[{t:"The Fragmented World",d:"Cubism depicted the modern world simultaneously from multiple perspectives \u2014 the end of single-point reality."},{t:"The Unconscious",d:"Surrealism used dreamlike imagery to access the unconscious, drawing on Freudian psychology."},{t:"Pure Abstraction",d:"Kandinsky, Mondrian, and Malevich pursued entirely non-representational art \u2014 painting freed from depicting anything."},{t:"The Artist's Gesture",d:"Abstract Expressionism treated the physical act of painting \u2014 the drip, the gesture \u2014 as the content itself."}],
+keywords:["Cubism","Expressionism","Surrealism","Abstraction","Collage","Automatism"],
+artists:[
+{id:"picasso",name:"Pablo Picasso",years:"1881\u20131973",icon:"\uD83C\uDFAD",
+short:"The most protean genius of the 20th century, who with Braque invented Cubism and never stopped transforming himself.",
+bio:"Pablo Ruiz Picasso is the dominant figure of 20th-century art. Born in Malaga, Spain, he moved through stylistic periods with remarkable speed: the Blue Period, the Rose Period, then the revolutionary Les Demoiselles d'Avignon (1907) that announced Cubism.\n\nWith Georges Braque, he spent several years in intense collaborative dialogue that produced Analytic and Synthetic Cubism. Over 92 years, he painted Guernica (1937), the century's greatest protest painting.",
+impact:"Picasso's invention of Cubism is the single most important formal breakthrough in 20th-century art. It shattered the 500-year-old Renaissance framework. Guernica remains the most powerful political artwork of the modern era.",
+works:[
+{title:"Guernica",year:"1937",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Guernica+Picasso+painting",desc:"Painted in response to the Nazi bombing of the Basque town of Guernica. In grey, black, and white \u2014 the colours of a newspaper photograph \u2014 Picasso assembled a splintered nightmare of screaming women, dying horses, dismembered soldiers. The most powerful anti-war painting ever made."},
+{title:"Les Demoiselles d'Avignon",year:"1907",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Les+Demoiselles+Avignon+Picasso",desc:"Five figures in a brothel interior, depicted in a pictorial language that abandons everything that preceded it. The picture plane is shattered. The most important painting of the 20th century."},
+{title:"Girl Before a Mirror",year:"1932",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Girl+Before+a+Mirror+Picasso",desc:"His mistress Marie-Therese Walter depicted looking at her reflection. Cubist multiple perspectives allow her to be seen simultaneously from different angles."}
+],
+quiz:[
+{q:"What new style of art did Picasso help invent that showed objects from multiple angles at once?",opts:["Impressionism","Surrealism","Cubism","Pop Art"],a:2,exp:"Cubism, invented by Picasso and Georges Braque around 1907, broke objects into geometric fragments and showed them from multiple viewpoints simultaneously."},
+{q:"Picasso's painting Guernica is a protest against what?",opts:["Poverty in Spain","The bombing of a town during the Spanish Civil War","World War Two","The French Revolution"],a:1,exp:"Guernica (1937) was Picasso's powerful response to the Nazi bombing of the Basque town of Guernica. Painted in black and white, it became the most famous anti-war artwork ever made."},
+{q:"Which of these is one of Picasso's most famous paintings?",opts:["The Birth of Venus","Les Demoiselles d'Avignon","The Night Watch","Girl with a Pearl Earring"],a:1,exp:"Les Demoiselles d'Avignon (1907) is considered one of the most important paintings of the 20th century. It announced the arrival of Cubism."}
+]},
+{id:"frida",name:"Frida Kahlo",years:"1907\u20131954",icon:"\uD83C\uDF3A",
+short:"Mexican painter whose intensely personal self-portraits transformed pain and identity into revolutionary art.",
+bio:"Frida Kahlo is one of the most important artists of the 20th century. Born in Coyoacan, Mexico City, she suffered a devastating bus accident at 18 that broke her spinal column, collarbone, ribs, right leg, and pelvis. She spent the rest of her life in varying degrees of chronic pain, undergoing more than 35 operations.\n\nShe began painting in bed using a specially constructed easel. She never formally studied art.",
+impact:"Frida Kahlo became a cultural icon only after her death. She is now one of the most famous artists in the world, a symbol of resilience, female creativity, and resistance.",
+works:[
+{title:"The Two Fridas",year:"1939",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Two+Fridas+Kahlo",desc:"Painted following her divorce from Diego Rivera. Two Fridas sit hand in hand \u2014 one in European dress, one in Mexican tehuana costume. Their hearts are exposed and connected by an artery; one artery is cut."},
+{title:"Self-Portrait with Thorn Necklace",year:"1940",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Self+Portrait+Thorn+Necklace+Frida+Kahlo",desc:"A hummingbird sits in the thorn necklace. A black cat and a monkey flank her. The thorns draw blood. The gaze is direct and unflinching."},
+{title:"The Broken Column",year:"1944",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Broken+Column+Frida+Kahlo",desc:"Following major spinal surgery, Kahlo depicted herself in a medical corset, her torso split open to reveal a crumbling Ionic column in place of her spine. Nails pierce her body everywhere. Her face streams tears yet her gaze is absolutely defiant."}
+],
+quiz:[
+{q:"Frida Kahlo started painting after what happened to her at age 18?",opts:["She won an art competition","She was in a serious bus accident and was bedridden","She moved to Paris","She met Diego Rivera"],a:1,exp:"Kahlo was in a devastating bus accident at 18 that broke many bones and left her in chronic pain. She began painting in bed using a specially made easel."},
+{q:"What is the subject of most of Frida Kahlo's paintings?",opts:["Mexican landscapes","Abstract shapes","Herself, self-portraits reflecting her pain and identity","Religious stories"],a:2,exp:"The vast majority of Kahlo's paintings are self-portraits. She used her own image to explore her physical pain, her Mexican identity, and her emotional life."},
+{q:"Which of these is a famous painting by Frida Kahlo?",opts:["Water Lilies","The Two Fridas","The Night Watch","Starry Night"],a:1,exp:"The Two Fridas (1939) shows two versions of Kahlo sitting hand in hand, with their hearts exposed and connected by an artery."}
+]},
+{id:"dali",name:"Salvador Dal\u00ed",years:"1904\u20131989",icon:"\uD83D\uDD70\uFE0F",
+short:"The flamboyant master of Surrealism whose melting clocks and dreamlike visions made the unconscious mind visible.",
+bio:"Salvador Dal\u00ed was born in Figueres, Catalonia, and became the most famous and theatrical artist of the 20th century. Expelled from the Madrid art school for declaring his teachers unworthy of examining him, he moved to Paris and joined the Surrealist movement in 1929.\n\nSurrealism sought to unlock the unconscious mind \u2014 dreams, desires, and irrational fears \u2014 using the visual language of hyperrealistic painting. Dal\u00ed called his method the paranoiac-critical method: deliberately inducing hallucinatory states and painting what he saw with the precision of a Dutch master.",
+impact:"Dal\u00ed brought Surrealism to a global mass audience. His imagery \u2014 melting clocks, burning giraffes, dreamscapes of impossible precision \u2014 became the visual shorthand for the unconscious mind. He influenced fashion, advertising, and film.",
+works:[
+{title:"The Persistence of Memory",year:"1931",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Persistence+of+Memory+Dali",desc:"The most famous Surrealist painting. Melting pocket watches drape over a cliff edge in a dreamlike Catalonian landscape. Dal\u00ed said he got the idea watching a piece of melting Camembert cheese. It took him just a few hours to paint."},
+{title:"The Elephant Gala",year:"1948",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Dali+elephants+long+legs+painting",desc:"Towering elephants with impossibly long spindly legs carry obelisks across a barren landscape. A favourite Dal\u00ed motif representing power and weightlessness simultaneously."},
+{title:"The Temptation of Saint Anthony",year:"1946",img:"SEARCH:https://www.google.com/search?tbm=isch&q=The+Temptation+of+Saint+Anthony+Dali",desc:"Saint Anthony kneels in the desert, holding a cross against a procession of temptations: elephants on impossibly long legs bearing a nude figure, towers, and apparitions."}
+],
+quiz:[
+{q:"What is the name of Dal\u00ed's most famous painting showing melting clocks?",opts:["The Surreal Dream","The Persistence of Memory","Clocks in a Landscape","Time Melting"],a:1,exp:"The Persistence of Memory (1931) is Dal\u00ed's most famous work. The melting pocket watches in a dreamlike landscape have become the most recognisable image of Surrealism. It is now in MoMA in New York."},
+{q:"What artistic movement did Dal\u00ed belong to?",opts:["Impressionism","Cubism","Surrealism","Pop Art"],a:2,exp:"Dal\u00ed was the most famous member of the Surrealist movement, which sought to unlock the unconscious mind by depicting dreamlike, irrational imagery with photographic precision."},
+{q:"Dal\u00ed said he got the idea for his melting clocks from watching what melt?",opts:["Chocolate","Ice cream","A piece of Camembert cheese","Candle wax"],a:2,exp:"Dal\u00ed claimed the image of melting watches came to him while staring at a piece of melting Camembert cheese after lunch. He then painted The Persistence of Memory in just a few hours."}
+]}
+]},
+{id:"contemporary",name:"Contemporary Art",period:"1960 \u2013 Present",emoji:"\uD83D\uDD35",
+tagline:"When art stopped being about beauty and started being about ideas \u2014 Conceptualism, installation, and the question of what art even is.",
+intro:"Contemporary art's defining characteristic is the absence of any single defining characteristic. From the 1960s onward, the very category of art became the primary subject of art. Artists questioned what art was, who it was for, and whether it needed to be beautiful, skillful, or even permanent.\n\nPop Art (Warhol, Lichtenstein), Minimalism, Land Art, Video Art, and street art followed in rapid succession. Contemporary art is deliberately uncomfortable \u2014 its job is to ask questions, not provide answers.",
+ideas:[{t:"Conceptualism",d:"The idea behind a work matters more than its physical execution \u2014 art as intellectual proposition."},{t:"Institutional Critique",d:"Art that interrogates the museum, the gallery, and the art market as systems of power and social control."},{t:"Identity & Politics",d:"Since the 1970s, questions of gender, race, sexuality, and post-colonialism have been central to contemporary art."},{t:"New Media",d:"Photography, video, digital technology, and the internet have expanded what art can be made from."}],
+keywords:["Conceptualism","Installation","Performance","Video Art","Appropriation","Post-modernism"],
+artists:[
+{id:"warhol",name:"Andy Warhol",years:"1928\u20131987",icon:"\uD83C\uDF45",
+short:"The Pope of Pop who erased the boundary between art and commerce, celebrity and reality, the unique and the mass-produced.",
+bio:"Andrew Warhola was born in Pittsburgh to Slovak immigrant parents and became one of the most successful commercial illustrators of the 1950s before reinventing himself as the central figure of American Pop Art.\n\nHis move to fine art was radical in its simplicity: he depicted the images surrounding Americans in mass culture \u2014 Campbell's soup cans, Brillo boxes, celebrities \u2014 using commercial silkscreen printing that deliberately drained his work of the artistic hand.",
+impact:"Warhol obliterated the distinction between high and low culture, between fine art and commercial art, between the unique and the mass-produced. His use of appropriation and serial repetition anticipated the digital image age.",
+works:[
+{title:"Campbell's Soup Cans",year:"1962",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Campbells+Soup+Cans+Andy+Warhol",desc:"32 canvases, each depicting a different variety of Campbell's condensed soup. Are they art? That was entirely the point. Warhol had eaten Campbell's soup every day for lunch for 20 years."},
+{title:"Marilyn Diptych",year:"1962",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Marilyn+Diptych+Andy+Warhol",desc:"Made immediately after Marilyn Monroe's death. 50 silkscreened images: the left half in brilliant colour, the right half in black and white fading, degrading, dying. Celebrity as simulacrum."},
+{title:"Gold Marilyn Monroe",year:"1962",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Gold+Marilyn+Monroe+Andy+Warhol",desc:"Marilyn Monroe's face floats on a vast gold background \u2014 deliberately evoking Byzantine icon painting. Warhol turns the celebrity into a saint, the movie still into a golden altarpiece."}
+],
+quiz:[
+{q:"Andy Warhol's Campbell's Soup Cans is a famous example of which art movement?",opts:["Impressionism","Cubism","Pop Art","Surrealism"],a:2,exp:"Campbell's Soup Cans (1962) is one of the most iconic works of Pop Art, a movement that celebrated everyday commercial images as worthy subjects for serious art."},
+{q:"Warhol made his Marilyn Diptych right after which event?",opts:["His own birthday","Marilyn Monroe's death","The opening of his Factory","A visit to the cinema"],a:1,exp:"Warhol made the Marilyn Diptych in 1962 immediately after Marilyn Monroe's death, silkscreening her face 50 times, half in vivid colour and half fading into black and white."},
+{q:"What was The Factory?",opts:["A place where Warhol manufactured real products","Warhol's famous New York studio and social hub","A type of painting technique","A gallery in London"],a:1,exp:"The Factory was Warhol's legendary New York studio, a hub for artists, musicians, and celebrities."}
+]},
+{id:"basquiat",name:"Jean-Michel Basquiat",years:"1960\u20131988",icon:"\uD83D\uDC51",
+short:"Neo-Expressionist graffiti-artist-turned-painter who fused raw energy, Black identity, and art history into an explosive new language.",
+bio:"Jean-Michel Basquiat is one of the most important American artists of the late 20th century. Born in Brooklyn to a Haitian father and Puerto Rican mother, he began his artistic life as a teenage graffiti artist in Lower Manhattan under the tag SAMO (Same Old Shit).\n\nHe transitioned to canvas painting around 1980 and was catapulted to fame. He died of a heroin overdose at 27. His Untitled (1982) sold for $110.5 million in 2017.",
+impact:"Basquiat opened the art world to graffiti, street culture, and Black artistic voices in an unprecedented way. His influence is visible in contemporary art, fashion, and hip-hop culture.",
+works:[
+{title:"Hollywood Africans",year:"1983",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Hollywood+Africans+Basquiat",desc:"Painted in Los Angeles, this work reflects on the commodification and stereotyping of Black people in Hollywood. Three figures (including Basquiat himself) are depicted with text fragments. Both angry and ironic."},
+{title:"Irony of Negro Policeman",year:"1981",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Irony+of+Negro+Policeman+Basquiat",desc:"A raw, visceral image of a Black policeman, torn between serving a system that oppresses him and his own community. The crown \u2014 Basquiat's signature symbol \u2014 appears alongside text fragments."},
+{title:"Riding with Death",year:"1988",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Riding+with+Death+Basquiat",desc:"One of Basquiat's last works, painted in the year of his death at 27. A skeletal figure rides a skeletal horse \u2014 a haunting image of mortality."}
+],
+quiz:[
+{q:"Before becoming a famous painter, what did Jean-Michel Basquiat do as a teenager?",opts:["He studied at art school","He wrote graffiti on walls in New York City","He worked as a museum guard","He was a musician"],a:1,exp:"Basquiat started out as a teenage graffiti artist in Lower Manhattan, writing cryptic poetic phrases on walls under the tag SAMO."},
+{q:"Basquiat's paintings often feature which recurring symbol representing dignity and heroism?",opts:["A star","A crown","A skull","A cross"],a:1,exp:"The crown appears throughout Basquiat's work as a symbol of greatness and dignity, often placed above figures to insist on their worth and importance."},
+{q:"Basquiat worked closely with which other famous artist in the 1980s?",opts:["Pablo Picasso","Claude Monet","Andy Warhol","Frida Kahlo"],a:2,exp:"Basquiat and Andy Warhol became close friends and collaborators in the 1980s, producing around 160 works together."}
+]},
+{id:"banksy",name:"Banksy",years:"b. c. 1974",icon:"\uD83D\uDEA8",
+short:"The anonymous Bristol-born street artist whose subversive stencils turned walls worldwide into a canvas for political wit and social satire.",
+bio:"Banksy is the world's most famous anonymous artist. His identity remains unknown despite decades of global fame. Born in Bristol around 1974, he developed his signature stencil technique in the 1990s to work quickly on walls without being caught.\n\nHis work appears uninvited on walls, bridges, and buildings from London to Gaza to Bethlehem. He has staged fake museum installations, shredded his own artwork at auction the moment it sold, and opened a dystopian theme park called Dismaland.",
+impact:"Banksy transformed street art from subcultural footnote to major art world force. He demonstrated that art could exist entirely outside the gallery system while reaching a far larger audience. His self-destructing Girl with Balloon at Sotheby's in 2018 became the defining art world moment of the decade.",
+works:[
+{title:"Girl with Balloon",year:"2002 (original)",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Banksy+Girl+with+Balloon",desc:"A small girl reaches toward a red heart-shaped balloon drifting away. In 2018, a framed version sold at Sotheby's for \u00a31.04 million and immediately self-shredded \u2014 built into the frame by Banksy years earlier. The shredded work was later resold for \u00a318.6 million."},
+{title:"Flower Thrower",year:"2005",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Banksy+Flower+Thrower",desc:"A masked protestor in throwing pose hurls not a petrol bomb but a bouquet of flowers. First appeared on a wall in Jerusalem. A perfectly compressed image of hope inside conflict."},
+{title:"Dismaland",year:"2015",img:"SEARCH:https://www.google.com/search?tbm=isch&q=Banksy+Dismaland",desc:"A five-week temporary art show billed as a bemusement park. A dystopian parody of Disneyland featuring over 50 artists. Visited by 150,000 people and then dismantled, materials donated to refugee camps in Calais."}
+],
+quiz:[
+{q:"What is unusual about Banksy compared to most famous artists?",opts:["He only paints in museums","His identity is completely anonymous and unknown","He only works in oil paint","He has never sold any work"],a:1,exp:"Banksy's identity remains unknown despite being the world's most famous street artist for over 25 years."},
+{q:"What happened when Banksy's Girl with Balloon sold at Sotheby's in 2018?",opts:["It was stolen","It burst into flames","It immediately shredded itself using a mechanism hidden in the frame","The auction was cancelled"],a:2,exp:"The moment the hammer fell at Sotheby's, a shredder built into the frame activated and shredded the canvas. The shredded version later sold for \u00a318.6 million."},
+{q:"Banksy's work often appears in conflict zones. Which of these locations has his work appeared?",opts:["Only in London","Only in New York","Bethlehem, Gaza, and on the West Bank barrier wall","Only in art galleries"],a:2,exp:"Banksy has painted extensively in conflict zones including Bethlehem, Gaza, and along the Israeli West Bank barrier wall."}
+]}
+]}
+];
+
+
+var SQ=[
+{type:"Which era?",q:"The Mona Lisa was painted by Leonardo da Vinci. Which era does he belong to?",opts:["Ancient Art","The Renaissance","Impressionism","Contemporary Art"],a:1,exp:"Leonardo da Vinci (1452-1519) was a key figure of the Renaissance, the period from around 1400 to 1600 when artists rediscovered the classical world and pioneered techniques like perspective."},
+{type:"Put it in order",q:"Which of these art movements came FIRST in history?",opts:["Impressionism","The Renaissance","Baroque","Ancient Art"],a:3,exp:"Ancient Art came first by thousands of years, from around 30,000 BCE. The Renaissance followed in 1400 CE, then the Baroque around 1600, and Impressionism not until the 1860s."},
+{type:"Which era?",q:"Rembrandt and Vermeer were both Dutch masters of dramatic light. Which era did they belong to?",opts:["The Renaissance","Ancient Art","Baroque","Modernism"],a:2,exp:"Rembrandt and Vermeer were key figures of the Baroque era (1600-1750), characterised by dramatic lighting, emotional intensity, and incredible technical skill."},
+{type:"True or false?",q:"Impressionism came BEFORE the Baroque period.",opts:["True","False"],a:1,exp:"False! The Baroque came first (1600-1750). Impressionism arrived much later in the 1860s and 1870s in France."},
+{type:"Match the artist",q:"Frida Kahlo is known for intensely personal self-portraits. Which era does she belong to?",opts:["Ancient Art","The Renaissance","Baroque","Modernism"],a:3,exp:"Frida Kahlo (1907-1954) was a Modernist painter. The Modernism era (1900-1960) included Cubism, Surrealism, and Expressionism."},
+{type:"Put it in order",q:"Which of these came LAST in the history of art?",opts:["Baroque","Ancient Art","The Renaissance","Contemporary Art"],a:3,exp:"Contemporary Art (1960 to present) is the most recent era. The order is: Ancient Art, Renaissance, Baroque, Impressionism, Modernism, and finally Contemporary Art."},
+{type:"Match the artist",q:"Claude Monet painted outdoors to capture light and atmosphere. Which movement was he part of?",opts:["Baroque","Impressionism","Ancient Art","Contemporary Art"],a:1,exp:"Monet was the founding father of Impressionism. He and his fellow Impressionists painted outdoors using quick visible brushstrokes to capture fleeting effects of light."},
+{type:"Which era?",q:"Andy Warhol made paintings of soup cans and celebrities like Marilyn Monroe. Which era?",opts:["The Renaissance","Baroque","Impressionism","Contemporary Art"],a:3,exp:"Andy Warhol was a leader of Pop Art, which belongs to Contemporary Art (1960 to present)."},
+{type:"Put it in order",q:"Which shows three eras in the RIGHT ORDER from oldest to newest?",opts:["Baroque then Ancient Art then Impressionism","Ancient Art then Renaissance then Impressionism","Impressionism then Baroque then Renaissance","Contemporary Art then Baroque then Ancient Art"],a:1,exp:"The correct order is Ancient Art (30,000 BCE onwards), the Renaissance (1400-1600), then Impressionism (1860-1900)."},
+{type:"Match the artist",q:"Picasso invented Cubism, showing objects from multiple angles at once. Which era?",opts:["Ancient Art","The Renaissance","Baroque","Modernism"],a:3,exp:"Picasso (1881-1973) belongs to Modernism. Along with Georges Braque, he invented Cubism around 1907."},
+{type:"True or false?",q:"Medieval artists often used gold backgrounds in paintings to represent divine light.",opts:["True","False"],a:0,exp:"True! Gold backgrounds in medieval art symbolised the divine light of heaven."},
+{type:"Match the artist",q:"Van Gogh painted Starry Night with swirling skies and intense emotion. Which era?",opts:["Ancient Art","Baroque","Post-Impressionism","Impressionism"],a:2,exp:"Van Gogh (1853-1890) belongs to Post-Impressionism. He took the Impressionist love of colour and pushed it toward pure emotional expression."},
+{type:"Which era?",q:"Salvador Dali painted melting clocks and dreamlike landscapes. Which era?",opts:["Impressionism","Baroque","Renaissance","Modernism"],a:3,exp:"Dali (1904-1989) was the most famous member of Surrealism, which belongs to the Modernism era. Surrealism sought to access the unconscious mind through dreamlike imagery."},
+{type:"True or false?",q:"The Impressionists were immediately celebrated and accepted by the official French art world.",opts:["True","False"],a:1,exp:"False! The Impressionists were rejected by the official French Salon. In 1874 they held their own independent exhibition."},
+{type:"Match the artist",q:"Which of these artists belonged to the Renaissance?",opts:["Andy Warhol","Rembrandt","Michelangelo","Monet"],a:2,exp:"Michelangelo (1475-1564) is one of the three great masters of the High Renaissance. He painted the Sistine Chapel ceiling and carved the statue of David."}
+];
+
+var state={page:"home",eraId:null,artistId:null};
+var quizStates={};
+var qReg={};
+var sqState={cur:0,answers:{},done:false};
+
+function getEra(){return ERAS.find(function(e){return e.id===state.eraId;});}
+function getArtist(){var era=getEra();return era&&era.artists.find(function(a){return a.id===state.artistId;});}
+
+function showPage(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.getElementById('page-'+id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){state={page:'home',eraId:null,artistId:null};showPage('home');renderBC();}
+function goEra(id){state={page:'era',eraId:id,artistId:null};renderEra();showPage('era');renderBC();}
+function goArtist(id){state.page='artist';state.artistId=id;renderArtist();showPage('artist');renderBC();}
+
+function renderBC(){
+  var bc=document.getElementById('bc');
+  if(!state.eraId){bc.innerHTML='';return;}
+  var era=getEra();
+  var h="<span onclick='goHome()'>Home</span><span>&#8250;</span><span onclick='goEra(\""+era.id+"\")'>" +era.name+ "</span>";
+  if(state.artistId){var a=getArtist();h+='<span>&#8250;</span><span>'+a.name+'</span>';}
+  bc.innerHTML=h;
+}
+
+function renderHome(){
+  var tl=document.getElementById('timeline');
+  tl.innerHTML=ERAS.map(function(e){
+    return "<div class='era-row' onclick='goEra(\""+e.id+"\")'>" +
+      "<div class='era-dot'></div>" +
+      "<div class='era-card'>" +
+        "<div class='era-period'>"+e.emoji+" "+e.period+"</div>" +
+        "<div class='era-name'>"+e.name+"</div>" +
+        "<div class='era-tagline'>"+e.tagline+"</div>" +
+        "<div class='era-pills'>"+e.keywords.slice(0,4).map(function(k){return "<span class='pill'>"+k+"</span>";}).join('')+"</div>" +
+        "<div class='era-arrow'>&#8594;</div>" +
+      "</div>" +
+    "</div>";
+  }).join('');
+}
+
+function renderEra(){
+  var era=getEra();
+  var introHtml=era.intro.split('\n\n').map(function(p){return '<p>'+p+'</p>';}).join('');
+  var ideasHtml=era.ideas.map(function(i){return '<div class="idea-card"><h4>'+i.t+'</h4><p>'+i.d+'</p></div>';}).join('');
+  var artistsHtml=era.artists.map(function(a){
+    return '<div class="artist-card" onclick="goArtist(this.dataset.id)" data-id="'+a.id+'"><div class="aicon">'+a.icon+'</div><h3>'+a.name+'</h3><div class="ayears">'+a.years+'</div><p class="ashort">'+a.short+'</p><div class="acta">Explore artist &#8594;</div></div>';
+  }).join('');
+  document.getElementById('era-content').innerHTML=
+    '<button class="back-btn" onclick="goHome()">&#8592; Back to Timeline</button>'+
+    '<div class="era-label">'+era.emoji+' '+era.period+'</div>'+
+    '<h1 class="era-title">'+era.name+'</h1>'+
+    '<div class="era-intro">'+introHtml+'</div>'+
+    '<div class="divider"></div>'+
+    '<h2 class="section-title">Core <span>Ideas</span></h2>'+
+    '<div class="ideas-grid">'+ideasHtml+'</div>'+
+    '<div class="divider"></div>'+
+    '<h2 class="section-title">Notable <span>Artists</span></h2>'+
+    '<div class="artists-grid">'+artistsHtml+'</div>'+
+    '<div class="divider"></div>'+
+    '<h2 class="section-title">Test Your <span>Knowledge</span></h2>'+
+    '<div id="qc"></div>';
+  var allQ=[];
+  era.artists.forEach(function(a){a.quiz.forEach(function(q){allQ.push(q);});});
+  initQ('qc',era.id+'-era',allQ);
+}
+
+function imgErr(el){el.style.display='none';var ph=document.getElementById(el.dataset.phid);if(ph)ph.style.display='flex';}
+function renderArtist(){
+  var era=getEra();var artist=getArtist();
+  var bioHtml=artist.bio.split('\n\n').map(function(p){return '<p>'+p+'</p>';}).join('');
+  var worksHtml=artist.works.map(function(w){
+    var isSearch=w.img.indexOf('SEARCH:')===0;
+    var searchUrl=isSearch?w.img.slice(7):'';
+    var imgId='img-'+Math.random().toString(36).substr(2,9);
+    if(isSearch){
+      return '<div class="work-card">'+
+        '<a href="'+searchUrl+'" target="_blank" rel="noopener noreferrer" class="wimg-wrap wsearch">'+
+          '<div class="wsearch-inner"><div class="wsearch-icon">&#128269;</div><div class="wsearch-label">Search for this painting</div><div class="wsearch-sub">Opens Google Images in a new tab</div></div>'+
+        '</a>'+
+        '<div class="winfo"><div class="wtname">'+w.title+'</div><div class="wyear">'+w.year+'</div><div class="wdesc">'+w.desc+'</div></div>'+
+      '</div>';
+    }
+    return '<div class="work-card">'+
+      '<a href="'+w.img+'" target="_blank" rel="noopener noreferrer" class="wimg-wrap">'+
+        '<img id="'+imgId+'" src="'+w.img+'" alt="'+w.title+'" class="wimg" data-phid="ph-'+imgId+'" onerror="imgErr(this)">'+
+        '<div id="ph-'+imgId+'" class="wplaceholder" style="display:none"><div class="wsearch-icon">&#128444;&#65039;</div><div class="wtitle">'+w.title+'</div></div>'+
+        '<div class="wimg-overlay">&#128269; View full size</div>'+
+      '</a>'+
+      '<div class="winfo"><div class="wtname">'+w.title+'</div><div class="wyear">'+w.year+'</div><div class="wdesc">'+w.desc+'</div></div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('artist-content').innerHTML=
+    '<button class="back-btn" data-eraid="'+era.id+'" onclick="goEra(this.dataset.eraid)">&#8592; Back to '+era.name+'</button>'+
+    '<div class="artist-header"><div class="abigicon">'+artist.icon+'</div>'+
+    '<div><div class="abadge">'+era.name+'</div><h1 class="aname">'+artist.name+'</h1><div class="adates">'+artist.years+'</div></div></div>'+
+    '<div class="abio">'+bioHtml+'</div>'+
+    '<h2 class="section-title">Notable <span>Works</span></h2>'+
+    '<div class="works-grid">'+worksHtml+'</div>'+
+    '<div class="impact-box"><h3>Legacy &amp; Impact</h3><p>'+artist.impact+'</p></div>'+
+    '<h2 class="section-title">Test Your <span>Knowledge</span></h2>'+
+    '<div id="qca"></div>';
+  initQ('qca',artist.id,artist.quiz);
+}
+
+function initQ(cid,key,questions){
+  qReg[key]=questions;
+  if(!quizStates[key]) quizStates[key]={cur:0,answers:{},done:false};
+  renderQ(cid,key);
+}
+function renderQ(cid,key){
+  var questions=qReg[key];var s=quizStates[key];
+  var el=document.getElementById(cid);
+  if(!el||!questions) return;
+  el.setAttribute('data-cid',cid);
+  el.setAttribute('data-key',key);
+  if(s.done){
+    var score=0;
+    for(var i in s.answers){if(Number(s.answers[i])===questions[i].a) score++;}
+    var msg=score===questions.length?'Perfect score! Brilliant.':score>=questions.length/2?'Well done — strong knowledge.':'Keep exploring — the art is worth knowing.';
+    el.innerHTML='<div class="qbox"><div class="qscore"><span class="qscore-num">'+score+'/'+questions.length+'</span><span class="qscore-msg">'+msg+'</span><button class="qretry" onclick="resetQ(this)">Try Again</button></div></div>';
+    return;
+  }
+  var q=questions[s.cur];var answered=s.answers[s.cur]!==undefined;var isLast=s.cur===questions.length-1;
+  var optsHtml=q.opts.map(function(opt,i){
+    var cls='qopt';
+    if(answered){if(i===q.a) cls+=' correct';else if(i===Number(s.answers[s.cur])) cls+=' wrong';}
+    return '<button class="'+cls+'" '+(answered?'disabled':'')+' data-i="'+i+'" onclick="ansQ(this)">'+opt+'</button>';
+  }).join('');
+  var fb=answered?((Number(s.answers[s.cur])===q.a?'&#10003; Correct! ':'&#10007; Not quite. ')+q.exp):'';
+  var fbCls='qfb'+(answered?(Number(s.answers[s.cur])===q.a?' show correct':' show wrong'):'');
+  el.innerHTML='<div class="qbox">'+
+    '<div class="qtop"><h3>Quick Quiz</h3><span class="qprog">Question '+(s.cur+1)+' of '+questions.length+'</span></div>'+
+    '<div class="qq">'+q.q+'</div><div class="qopts">'+optsHtml+'</div>'+
+    '<div class="'+fbCls+'">'+fb+'</div>'+
+    '<div class="qnav">'+
+      '<button class="qbtn" '+(s.cur===0?'disabled':'')+' onclick="prevQ(this)">&#8592; Previous</button>'+
+      '<button class="qbtn" '+(!answered?'disabled':'')+' onclick="'+(isLast?'finishQ':'nextQ')+'(this)">'+( isLast?'See Results':'Next &#8594;')+'</button>'+
+    '</div></div>';
+}
+function getQCtx(el){var c=el.closest('[data-cid]');return{cid:c.dataset.cid,key:c.dataset.key};}
+function ansQ(el){var ctx=getQCtx(el);var s=quizStates[ctx.key];if(s.answers[s.cur]!==undefined) return;s.answers[s.cur]=Number(el.dataset.i);renderQ(ctx.cid,ctx.key);}
+function nextQ(el){var ctx=getQCtx(el);quizStates[ctx.key].cur++;renderQ(ctx.cid,ctx.key);}
+function prevQ(el){var ctx=getQCtx(el);quizStates[ctx.key].cur--;renderQ(ctx.cid,ctx.key);}
+function finishQ(el){var ctx=getQCtx(el);quizStates[ctx.key].done=true;renderQ(ctx.cid,ctx.key);}
+function resetQ(el){var ctx=getQCtx(el);quizStates[ctx.key]={cur:0,answers:{},done:false};renderQ(ctx.cid,ctx.key);}
+
+
+function renderSQPips(){
+  var el=document.getElementById('sq-pips');if(!el) return;
+  el.innerHTML=SQ.map(function(q,i){
+    var cls='sq-pip';
+    if(!sqState.done&&i===sqState.cur) cls+=' cur';
+    else if(sqState.answers[i]!==undefined) cls+=(Number(sqState.answers[i])===q.a?' ok':' no');
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+}
+function renderSQ(){
+  renderSQPips();
+  var el=document.getElementById('sq-box');if(!el) return;
+  if(sqState.done){
+    var score=0;
+    for(var i in sqState.answers){if(Number(sqState.answers[i])===SQ[i].a) score++;}
+    var pct=Math.round(score/SQ.length*100);
+    var msg=pct===100?'Perfect! You really know your art history.':pct>=80?'Excellent work \u2014 you clearly paid attention!':pct>=60?'Good effort \u2014 have another look at the eras you missed.':'Keep exploring the site and try again!';
+    el.innerHTML='<div class="qbox"><div class="sq-score"><span class="sq-score-num">'+score+'/'+SQ.length+'</span><span class="sq-score-msg">'+msg+'</span><button class="sq-retry" onclick="initSQ()">Try Again</button></div></div>';
+    return;
+  }
+  var q=SQ[sqState.cur];var answered=sqState.answers[sqState.cur]!==undefined;var isLast=sqState.cur===SQ.length-1;
+  var isCorrect=answered&&Number(sqState.answers[sqState.cur])===q.a;
+  var optsHtml=q.opts.map(function(opt,i){
+    var cls='qopt';
+    if(answered){if(i===q.a) cls+=' correct';else if(i===Number(sqState.answers[sqState.cur])) cls+=' wrong';}
+    return '<button class="'+cls+'" '+(answered?'disabled':'')+' onclick="ansSQ('+i+')">'+opt+'</button>';
+  }).join('');
+  var fb=answered?((isCorrect?'&#10003; Correct! ':'&#10007; Not quite. ')+q.exp):'';
+  var fbCls='qfb'+(answered?(isCorrect?' show correct':' show wrong'):'');
+  el.innerHTML='<div class="qbox">'+
+    '<div class="sq-type-label">'+q.type+' \u2014 Question '+(sqState.cur+1)+' of '+SQ.length+'</div>'+
+    '<div class="qq">'+q.q+'</div><div class="qopts">'+optsHtml+'</div>'+
+    '<div class="'+fbCls+'">'+fb+'</div>'+
+    '<div class="qnav">'+
+      '<button class="qbtn" '+(sqState.cur===0?'disabled':'')+' onclick="prevSQ()">&#8592; Previous</button>'+
+      '<button class="qbtn" '+(!answered?'disabled':'')+' onclick="'+(isLast?'finishSQ()':'nextSQ()')+'">'+( isLast?'See My Score':'Next &#8594;')+'</button>'+
+    '</div></div>';
+}
+function ansSQ(i){if(sqState.answers[sqState.cur]!==undefined) return;sqState.answers[sqState.cur]=i;renderSQ();}
+function nextSQ(){sqState.cur++;renderSQ();}
+function prevSQ(){sqState.cur--;renderSQ();}
+function finishSQ(){sqState.done=true;renderSQ();renderSQPips();}
+function initSQ(){sqState={cur:0,answers:{},done:false};renderSQ();}
+
+renderHome();
+initSQ();
+</script>
+</body>
+</html>
